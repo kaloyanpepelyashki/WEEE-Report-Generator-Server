@@ -121,7 +121,9 @@ app.use((err, req: Request, res: Response, next: NextFunction) => {
   res.status(500).send("Something went wrong! Internal server error");
 });
 
-//TODO Modify the neccessary methods to also require country the report is being exporeted for
+//========= Web hook routes
+app.use("/webhooks", webHookRouter);
+
 app.post("/api/v1/initCalculation", async (req: Request, res: Response) => {
   const route: string = "/initCalculation";
   try {
