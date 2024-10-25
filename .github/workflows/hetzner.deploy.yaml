@@ -4,8 +4,29 @@ on:
   push:
     branches:
       - production # Trigger deployment on the "production" branch
+      - development/* # Trigger testing on branches starting with "development/"
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/heads/development/')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20" # Use Node.js 20
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./
+
+      - name: Run Jest tests
+        run: npm test # or use 'npx jest' if Jest isn't the default test runner
+        working-directory: ./
+        
   deploy:
     runs-on: ubuntu-latest
 
@@ -20,11 +41,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./Server/WEEE-Calculator-Server/
+        working-directory: ./
 
       - name: Compile TypeScript
         run: npm run build
-        working-directory: ./Server/WEEE-Calculator-Server/
+        working-directory: ./
 
       - name: Install sshpass (for password authentication)
         run: sudo apt-get install -y sshpass
